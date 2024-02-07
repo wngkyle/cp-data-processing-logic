@@ -11,7 +11,7 @@ import openpyxl
 # Agument : n/a
 # Start processing data and creating new excel file with results stored in it
 def reading_and_processing():
-    fileDetail['all_files'] = os.listdir('./' + fileDetail['selected_folder'])
+    fileDetail['all_files'] = os.listdir(fileDetail['selected_folder'])
     temp =  fileDetail['all_files'][:]
     index = 0
     for f in temp:
@@ -33,8 +33,8 @@ def reading_and_processing():
             image_y += 30
 
         # Setting variables
-        fpath = f'./{fileDetail["selected_folder"]}/{fname}'
-        newfpath = f'./{fileDetail["fdpath"]}/{fname}x'
+        fpath = f'{fileDetail["selected_folder"]}/{fname}'
+        newfpath = f'{fileDetail["fdpath"]}/{fname}x'
         findex = fname.find('-')+1
 
         # Read in the file as a data frame using pandas
@@ -71,4 +71,5 @@ def reading_and_processing():
         wb = openpyxl.Workbook(newfpath)
         
         count += 1
+        break
         

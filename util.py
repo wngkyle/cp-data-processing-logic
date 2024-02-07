@@ -36,12 +36,14 @@ def display_column_names():
     for col in fileDetail['all_column_headers']:
         print(f'({index}) {col}')
         index += 1
-    user_input = ''
+    user_input = ' '
     count = 0
-    while(user_input != 'q' and count != len(fileDetail['all_column_headers'])):
+    len_check = True
+    while(len_check or user_input != 'q' and user_input != '' and count != len(fileDetail['all_column_headers'])):
         user_input = input('Enter index of the column you want to process (press "q" to quit): ')
-        if (user_input != 'q'):
+        if (user_input != 'q' and user_input != ''):
             fileDetail['selected_column'][fileDetail['all_column_headers'][int(user_input)]] = 1
+            len_check = False
             count += 1
 
 # Argument : n/a
@@ -60,9 +62,44 @@ def folder_selection():
     fileDetail['selected_folder'] = listOfDirectories[int(folder)]
     fileDetail['fdpath'] = f'{fileDetail["selected_folder"]}_Processed'
     # Folder Creation
-    # copy_directory_command = f'cp -r {fileDetail["selected_folder"]} {fileDetail["fdpath"]}'
-    # os.popen(copy_directory_command)
     os.mkdir(fileDetail['fdpath'])
+
+# Argument : n/a
+# Allow user to navigate around computer to find the folder to processed
+def custom_folder_selection():
+    user_input = ''
+    current_working_dir = ''
+    selected_folder = ''
+    while user_input != 'q':
+        current_working_dir = os.getcwd()
+        print('Current Directory Path:', current_working_dir)
+        all_files = os.scandir()
+        all_files = list(filter(check_files, all_files))
+        for index in range(len(all_files)):
+            print(f'({index}) {all_files[index].name}')
+        user_input = input('Enter command: ')
+
+        if user_input == 'l':
+            os.chdir(f'{current_working_dir}/..')
+        elif user_input == 'r':
+            directory = input('Choose a directory to forward to: ')
+            directory = all_files[int(directory)].name
+            os.chdir(f'{current_working_dir}/{directory}')
+        elif user_input != 'q':
+            selected_folder = all_files[int(user_input)].name
+            break
+    fileDetail['selected_folder'] = f'{current_working_dir}/{selected_folder}'
+    fileDetail['fdpath'] = f'{fileDetail["selected_folder"]}_Processed'
+    print(fileDetail['selected_folder'])
+    os.mkdir(fileDetail['fdpath'])
+
+# Argument : n/a
+# Helper function for python filter()
+def check_files(file):
+    if file.is_dir() == False or file.name == '.git' or file.name == '__pycache__' or file.name == '$RECYCLE.BIN' or file.name == '.ipynb_checkpoints' or file.name == '.jpeg File':
+        return False
+    return True
+
 
 # Argument : n/a 
 # Prompt the user to select the directory store processed files

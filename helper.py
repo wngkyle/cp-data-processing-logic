@@ -155,10 +155,10 @@ def graph_write_download(col, units, fname, fdpath_chart, findex, newfpath, imag
         if pd.notna(temp) and pd.notna(x_coord) and pd.notna(y_coord) and pf.iloc[index]:
             data[int(x_coord)][int(y_coord)] = temp
     
-    min_val = np.nanmin(data)
-    max_val = np.nanmax(data)
-
-    sns.heatmap(data, cmap='coolwarm')
+    if col == 'Turn_off_80mA_HL':
+        sns.heatmap(data, cmap='Blues')
+    else: 
+        sns.heatmap(data, cmap='RdBu')
     plt.title(f'{fname[:findex+2]} : {col}')
     plt.axis([56, 200, 64, 200])
 
@@ -166,7 +166,6 @@ def graph_write_download(col, units, fname, fdpath_chart, findex, newfpath, imag
     wmap_fpath = f'{fileDetail[fdpath_wmap]}/{fname[:findex+2]}.png'
     plt.savefig(wmap_fpath)
     plt.close()
-
 
     # Creating a new file and writing the data back into the file
     data = {f'Range ({units})' : x_data, 'Amount (units)' : y_data}
@@ -183,17 +182,17 @@ def graph_write_download(col, units, fname, fdpath_chart, findex, newfpath, imag
     wb.save(newfpath)
 
     # Add chart to final file
-    wb = openpyxl.load_workbook(f'./{fileDetail["fdpath"]}/{col}.xlsx')
+    wb = openpyxl.load_workbook(f'{fileDetail["fdpath"]}/{col}.xlsx')
     sht = wb['Sheet']
     chart = openpyxl.drawing.image.Image(chart_fpath)
     chart.anchor = f'{image_x}{image_y}'
     sht.add_image(chart)
-    wb.save(f'./{fileDetail["fdpath"]}/{col}.xlsx')
+    wb.save(f'{fileDetail["fdpath"]}/{col}.xlsx')
 
     # Add heatmap to final file
-    wb_wmap = openpyxl.load_workbook(f'./{fileDetail["fdpath"]}/{col}_wmap.xlsx')
+    wb_wmap = openpyxl.load_workbook(f'{fileDetail["fdpath"]}/{col}_wmap.xlsx')
     sht_wmap = wb_wmap['Sheet']
     wmap = openpyxl.drawing.image.Image(wmap_fpath)
     wmap.anchor = f'{image_x}{image_y}'
     sht_wmap.add_image(wmap)
-    wb_wmap.save(f'./{fileDetail["fdpath"]}/{col}_wmap.xlsx')
+    wb_wmap.save(f'{fileDetail["fdpath"]}/{col}_wmap.xlsx')
